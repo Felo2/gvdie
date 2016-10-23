@@ -27,7 +27,7 @@ public class SevensGUI extends JFrame implements ActionListener{
     public static void main(String [] args){
         SevensGUI gui = new SevensGUI();
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gui.setTitle("Scott's Sevens Game");
+        gui.setTitle("Matthew Pische's Sevens Game");
         gui.pack();
         gui.setVisible(true);
     }
@@ -71,7 +71,25 @@ public class SevensGUI extends JFrame implements ActionListener{
         add(pass1Button, position);
         pass1Button.addActionListener(this);
 
-        // FIX ME: add score label and buttons for Player 2
+        // score label and buttons for Player 2
+        
+        score2Label = new JLabel();
+        position = new GridBagConstraints();
+        position.gridx = 4;
+        position.gridy = 2;
+        add(score2Label, position);
+        
+        roll2Button = new JButton("roll");
+        position.gridx = 4;
+        position.gridy = 3; 
+        add(roll2Button, position);
+        roll2Button.addActionListener(this);
+        
+        pass2Button = new JButton("pass");
+        position.gridx = 4;
+        position.gridy = 4;
+        add(pass2Button, position);
+        pass2Button.addActionListener(this);
 
         setupMenus();
         newGame();
@@ -89,8 +107,10 @@ public class SevensGUI extends JFrame implements ActionListener{
             System.exit(1);
         }
 
-        // FIX ME: player selected new game from menu
-
+        // player selected new game from menu
+        if (e.getSource() == newGameItem) {
+            newGame();
+        }
         // player clicked on one of the roll buttons
         if (e.getSource() == roll1Button || e.getSource() == roll2Button){
             theGame.rollDice();
@@ -100,21 +120,44 @@ public class SevensGUI extends JFrame implements ActionListener{
                 pass2Button.setEnabled(true);            
         }
 
-        // FIX ME: player clicked on one of the pass buttons  
+        // player clicked on one of the pass buttons  
         // pass the dice    
         if (e.getSource() == pass1Button || e.getSource() == pass2Button){
-
+            theGame.passDice();
+            if (theGame.isPlayer1turn()) {
+                roll1Button.setEnabled(true);
+                roll2Button.setEnabled(false);
+                pass1Button.setEnabled(false);
+                pass2Button.setEnabled(false);
+            } else {
+                roll1Button.setEnabled(false);
+                roll2Button.setEnabled(true);
+                pass1Button.setEnabled(false);
+                pass2Button.setEnabled(false);
+            }
         }
 
-        // FIX ME: disable both roll buttons if turn is over
+        // disable both roll buttons if turn is over
+        if (theGame.turnOver()) {
+            roll1Button.setEnabled(false);
+            roll2Button.setEnabled(false);
+        }
 
         // update the scores
         score1Label.setText("Player 1: " + theGame.getScore1());
         score2Label.setText("Player 2: " + theGame.getScore2());
 
-        //FIX ME: disable all buttons if game over.
+        // disable all buttons if game over.
         // display winning message using JOptionPane
-
+        if (theGame.gameOver()) {
+            roll1Button.setEnabled(false);
+            roll2Button.setEnabled(false);
+            pass1Button.setEnabled(false);
+            pass2Button.setEnabled(false);
+            JOptionPane.showMessageDialog(this, String.format("Player %d wins!", 
+                                                                theGame.getScore1() > theGame.getScore2() ? 
+                                                                2 : 1));                                              
+        }
     }   
 
     /************************************************************
@@ -125,8 +168,9 @@ public class SevensGUI extends JFrame implements ActionListener{
         roll1Button.setEnabled(false);
         pass1Button.setEnabled(false); 
 
-        //FIX ME: disable buttons for player 2
-
+        //disable buttons for player 2
+        roll2Button.setEnabled(false);
+        pass2Button.setEnabled(false);
     }
 
     /************************************************************
@@ -136,8 +180,11 @@ public class SevensGUI extends JFrame implements ActionListener{
         score1Label.setText("Player 1: " + theGame.getScore1());
         theGame.resetGame();
 
-        // FIX  ME: finish this method
-
+        disableAllButtons();
+        // enable player 1 roll button, display score for players 
+        roll1Button.setEnabled(true);
+        score1Label.setText("Player 1: " + theGame.getScore1());
+        score2Label.setText("Player 2: " + theGame.getScore2());
     }
 
     /************************************************************

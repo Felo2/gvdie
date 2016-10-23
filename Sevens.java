@@ -17,7 +17,7 @@ class Sevens {
         numRolls = 0;
     }
     // accessors
-    // NOTE project spec omits the roll number from vars to put behind getters
+    
     public int getRolls() {
         return numRolls;
     }
