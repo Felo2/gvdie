@@ -4,6 +4,7 @@ class Sevens {
     int scoreP1, scoreP2;
     int numRolls;
     boolean isP1Turn;
+    int TURNS = 3;
     
     public Sevens() {
         dice = new GVdie[] { new GVdie(), new GVdie(), new GVdie(), new GVdie(), new GVdie(), new GVdie() };
@@ -30,13 +31,13 @@ class Sevens {
         return isP1Turn;
     }
     public boolean turnOver() {
-        if (numRolls >= 3) 
+        if (numRolls == TURNS) 
             return true;
         else
             return false;
     }
     public boolean gameOver() {
-        if (getScore1() >= 77 || getScore1() >= 77)
+        if (getScore1() >= 77 || getScore2() >= 77)
             return true;
         else 
             return false;
@@ -62,6 +63,14 @@ class Sevens {
         }
         return total;
     }
+    private int getHeldTotal() {
+        int total = 0;
+        for (GVdie die : dice) {
+            if (die.isHeld())
+                total += die.getValue();
+        }
+        return total;
+    }
     private int getNumHeld() {
         int total = 0;
         for (GVdie die : dice) {
@@ -81,16 +90,19 @@ class Sevens {
                 System.out.print("* ");
             else
                 System.out.print(die.getValue() + " ");
-        }   
+        }
+        System.out.println();
     }
     // mutator methods
     public void rollDice() {
-        if (numRolls < 3) {
+        if (!turnOver() && isValidHand()) {
             for (GVdie die : dice) {
                 if (!die.isHeld())
                     die.roll();
             }
             numRolls++;
+            
+            checkValidOptions();
         }
     }
     public void passDice() {
@@ -99,6 +111,7 @@ class Sevens {
             scoreP1 += getDiceTotal();
         else
             scoreP2 += getDiceTotal();
+        
         isP1Turn = !isP1Turn;
         numRolls = 0;
         resetDice();
@@ -114,22 +127,73 @@ class Sevens {
     private void checkValidOptions() {
         boolean hasMove = false;
         checkLoop:
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < dice.length; i++) {
             if (!dice[i].isHeld())
-                for (int j = i + 1; j < 6; j++) {
-                    if (!dice[j].isHeld() && dice[i] + dice[j] == 7) {
+                for (int j = i + 1; j < dice.length; j++) {
+                    if (!dice[j].isHeld() && dice[i].getValue() + dice[j].getValue() == 7) {
                         hasMove = true;
                         break checkLoop;
                     }
                 }
         }
         if (!hasMove) {
-            numRolls = 3;
+            numRolls = TURNS;
             freezeDice();
         }
     }
     private boolean isValidHand() {
-        if (numRolls == 0 && 
+        if (numRolls == 0 && getNumHeld() == 0)
+            return true;
+        else if (numRolls == 1 && getNumHeld() == 2 && getHeldTotal() == 7) 
+            return true;
+        else if (numRolls == 2 && getNumHeld() == 4 && getHeldTotal() == 14)
+            return true;
+        else
+            return false;
+    }
+    // methods for testing
+    private void autoHold() {
+       boolean didMove = false;
+       checkLoop:
+       for (int i = 0; i < dice.length; i++) {
+           if (!dice[i].isHeld()) 
+                for (int j = i + 1; j < dice.length; j++) {
+                    if (!dice[j].isHeld() && dice[i].getValue() + dice[j].getValue() == 7) {
+                        dice[i].setHeld(true);
+                        dice[j].setHeld(true);
+                        didMove = true;
+                        break checkLoop;
+                    }
+                }
+        }
+        if (didMove == false)
+            numRolls = TURNS;
+    }
+    private void autoTurn() {
+        while(!turnOver()) {
+            rollDice();
+            showDice();
+            autoHold();
+        }
+        passDice();
+    }
+    public void autoGame() {
+        while (!gameOver()) {
+            System.out.println(String.format("Player %d turn, Score: %d", 
+                                isPlayer1Turn() ? 1 : 2, 
+                                isPlayer1Turn() ? getScore1() : getScore2()
+                                ));
+            autoTurn();
+            System.out.println(String.format("New Score: %d", 
+                                            !isPlayer1Turn() ? getScore1() : getScore2())
+                                            );
+            System.out.println();
+        }
+        System.out.println("Game Over");
+        System.out.println(String.format("Player 1: %d", getScore1()));
+        System.out.println(String.format("Player 2: %d", getScore2()));
+        System.out.println(String.format("Player %d Wins!", isPlayer1Turn() ? 1 : 2));
+        resetGame();
     }
 }
 
