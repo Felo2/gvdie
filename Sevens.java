@@ -27,7 +27,7 @@ class Sevens {
     public int getScore2() {
         return scoreP2;
     }
-    public boolean isPlayer1Turn() {
+    public boolean isPlayer1turn() {
         return isP1Turn;
     }
     public boolean turnOver() {
@@ -107,7 +107,7 @@ class Sevens {
     }
     public void passDice() {
         // update score, change player, reset rolls, reset dice
-        if (isPlayer1Turn()) 
+        if (isPlayer1turn()) 
             scoreP1 += getDiceTotal();
         else
             scoreP2 += getDiceTotal();
@@ -180,19 +180,19 @@ class Sevens {
     public void autoGame() {
         while (!gameOver()) {
             System.out.println(String.format("Player %d turn, Score: %d", 
-                                isPlayer1Turn() ? 1 : 2, 
-                                isPlayer1Turn() ? getScore1() : getScore2()
+                                isPlayer1turn() ? 1 : 2, 
+                                isPlayer1turn() ? getScore1() : getScore2()
                                 ));
             autoTurn();
             System.out.println(String.format("New Score: %d", 
-                                            !isPlayer1Turn() ? getScore1() : getScore2())
+                                            !isPlayer1turn() ? getScore1() : getScore2())
                                             );
             System.out.println();
         }
         System.out.println("Game Over");
         System.out.println(String.format("Player 1: %d", getScore1()));
         System.out.println(String.format("Player 2: %d", getScore2()));
-        System.out.println(String.format("Player %d Wins!", isPlayer1Turn() ? 1 : 2));
+        System.out.println(String.format("Player %d Wins!", isPlayer1turn() ? 1 : 2));
         resetGame();
     }
 }
