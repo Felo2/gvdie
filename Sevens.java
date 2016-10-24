@@ -1,12 +1,13 @@
 class Sevens {
-    // GVdie d1, d2, d3, d4, d5, d6;
     GVdie[] dice; 
     int scoreP1, scoreP2;
     int numRolls;
     boolean isP1Turn;
     int TURNS = 3;
+    int SCORE = 77;
     
     public Sevens() {
+        // initialize dice instance objects in an array & set all to blank to start
         dice = new GVdie[] { new GVdie(), new GVdie(), new GVdie(), new GVdie(), new GVdie(), new GVdie() };
         for (GVdie die : dice) {
             die.setBlank();
@@ -16,8 +17,8 @@ class Sevens {
         scoreP2 = 0;
         numRolls = 0;
     }
-    // accessors
     
+    // accessors
     public int getRolls() {
         return numRolls;
     }
@@ -37,13 +38,12 @@ class Sevens {
             return false;
     }
     public boolean gameOver() {
-        if (getScore1() >= 77 || getScore2() >= 77)
+        if (getScore1() >= SCORE || getScore2() >= SCORE)
             return true;
         else 
             return false;
     }
-    // NOTE: this method is required in project spec, 
-    // redundant here due to initializing them in an array
+    // NOTE: this method is required in project spec, but redundant due to array use
     public GVdie getDie(int num) {
         return dice[num - 1];
     }
@@ -84,15 +84,6 @@ class Sevens {
             die.setFrozen(true);
         }
     }
-    private void showDice() {
-        for (GVdie die : dice) {
-            if (die.isHeld())
-                System.out.print("* ");
-            else
-                System.out.print(die.getValue() + " ");
-        }
-        System.out.println();
-    }
     // mutator methods
     public void rollDice() {
         if (!turnOver() && isValidHand()) {
@@ -101,7 +92,6 @@ class Sevens {
                     die.roll();
             }
             numRolls++;
-            
             checkValidOptions();
         }
     }
@@ -152,6 +142,15 @@ class Sevens {
             return false;
     }
     // methods for testing
+    private void showDice() {
+        for (GVdie die : dice) {
+            if (die.isHeld())
+                System.out.print("* ");
+            else
+                System.out.print(die.getValue() + " ");
+        }
+        System.out.println();
+    }
     private void autoHold() {
        boolean didMove = false;
        checkLoop:
@@ -187,7 +186,7 @@ class Sevens {
             System.out.println(String.format("New Score: %d", 
                                             !isPlayer1turn() ? getScore1() : getScore2())
                                             );
-            System.out.println();
+
         }
         System.out.println("Game Over");
         System.out.println(String.format("Player 1: %d", getScore1()));

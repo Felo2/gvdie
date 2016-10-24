@@ -40,7 +40,7 @@ public class SevensGUI extends JFrame implements ActionListener{
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
 
-        // display all dice using a fancy loop
+        // display all dice 
         position = new GridBagConstraints();
         position.gridy = 0;
         position.gridx = 0;   
@@ -137,7 +137,7 @@ public class SevensGUI extends JFrame implements ActionListener{
             }
         }
 
-        // disable both roll buttons if turn is over
+        // disable roll buttons if turn is over
         if (theGame.turnOver()) {
             roll1Button.setEnabled(false);
             roll2Button.setEnabled(false);
@@ -177,9 +177,7 @@ public class SevensGUI extends JFrame implements ActionListener{
     Reset the game, the score, and enable all buttons
      ************************************************************/
     private void newGame(){
-        score1Label.setText("Player 1: " + theGame.getScore1());
         theGame.resetGame();
-
         disableAllButtons();
         // enable player 1 roll button, display score for players 
         roll1Button.setEnabled(true);
